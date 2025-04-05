@@ -23,7 +23,7 @@ const views = [
         ></path>
       </svg>
     ),
-    view: UnsupportedOptionView
+    view: UnsupportedOptionView,
   },
   {
     name: 'Comments',
@@ -35,7 +35,7 @@ const views = [
         ></path>
       </svg>
     ),
-    view: UnsupportedOptionView
+    view: UnsupportedOptionView,
   },
   // {
   //   name: 'AI',
@@ -56,7 +56,7 @@ const views = [
 ]
 
 const route = useRoute()
-const id = route.query.id as string | undefined;
+const id = route.query.id as string | undefined
 
 const languageCompartment = new Compartment()
 
@@ -89,29 +89,29 @@ function setRightPanel(view) {
 async function setLanguage() {
   if (!e) return
 
-  let ext = [];
+  let ext = []
 
   if (language.value.id) {
     if (language.value.support) {
       // has normal support
       e.dispatch({
-        effects: languageCompartment.reconfigure(language.value.support)
+        effects: languageCompartment.reconfigure(language.value.support),
       })
       console.log('dispatch', e)
     } else {
       // has stream, use legacy
       e?.dispatch({
-        effects: languageCompartment.reconfigure(StreamLanguage.define(language.value.stream))
+        effects: languageCompartment.reconfigure(StreamLanguage.define(language.value.stream)),
       })
     }
   }
 }
 
 onMounted(async () => {
-  let doc;
+  let doc
 
   if (id) {
-    const body = await (await fetch(`https://api.github.com/gists/${id}`)).json() as Gist
+    const body = (await (await fetch(`https://api.github.com/gists/${id}`)).json()) as Gist
 
     /** @todo support multiple files */
     let file = Object.entries(body.files)[0][1]
@@ -121,60 +121,78 @@ onMounted(async () => {
     }
   }
 
-  const state = EditorState.create(doc ? {
-    doc,
-    extensions: [
-      basicSetup,
-      languageCompartment.of((detectLanguage(filename.value)?.stream ? StreamLanguage.define(detectLanguage(filename.value)?.stream!) : detectLanguage(filename.value)?.support)!),
-    ]
-  } : {
-    extensions: [
-      basicSetup,
-      languageCompartment.of([]),
-    ]
-  })
+  const state = EditorState.create(
+    doc
+      ? {
+          doc,
+          extensions: [
+            basicSetup,
+            languageCompartment.of(
+              (detectLanguage(filename.value)?.stream
+                ? StreamLanguage.define(detectLanguage(filename.value)?.stream!)
+                : detectLanguage(filename.value)?.support)!,
+            ),
+          ],
+        }
+      : {
+          extensions: [basicSetup, languageCompartment.of([])],
+        },
+  )
   e = new EditorView({
     parent: editorRef.value!,
-    state
-  });
+    state,
+  })
 })
 
 // ${rightViewTag ? 'max-w-[70%]' : `max-w-[94%]`}
 </script>
 
 <template>
-  <div class="editor-container flex flex-row px-1 w-full max-w-[100lvw] max-h-full h-full">
+  <div class="editor-container flex h-full max-h-full w-full max-w-[100lvw] flex-row">
     <!-- Two Major Tabs -->
-    <div :class="`flex-1 flex flex-col grow w-0`">
+    <div class="flex w-0 flex-1 grow flex-col">
       <!-- Main Code Editor Tab -->
-      <div class="flex min-h-8 flex-row items-center justify-start gap-1 px-1">
+      <div class="flex min-h-8 flex-row items-center justify-start gap-1 px-2">
         <!-- Icon -->
         <div :key="language.name">
-          <Icon :icon="language.icon" />
+          <Icon :icon="language.icon" class="scale-125" />
         </div>
 
         <!-- Text Editor for file name -->
         <div>
           <input
             v-model="filename"
-            class="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none sm:text-sm/6 bg-[var(--color-background)]"
+            class="block min-w-0 grow bg-[var(--color-background)] py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6 dark:text-gray-100"
             placeholder="file.txt"
             @change="setLanguage()"
           />
         </div>
       </div>
       <div class="editor w-full">
-        <div ref="editor"
-        ></div>
+        <div ref="editor"></div>
       </div>
     </div>
-    <div v-show="rightViewTag" class="min-w-[25rem] px-3">
+    <div v-show="rightViewTag" class="min-w-[20rem] border-l px-3 shadow">
       <component :is="rightView" />
     </div>
-    <div class="flex flex-col items-center justify-start gap-4 px-3 py-2 border-l dark:border-gray-100 w-full max-w-14">
+    <div
+      class="flex w-full max-w-14 flex-col items-center justify-start border-l py-2 shadow dark:border-gray-100"
+    >
       <!-- Tab Items -->
-      <div v-for="view in views" :key="view.name">
-        <div @click="setRightPanel(view)">
+      <div
+        v-for="view in views"
+        :key="view.name"
+        class="mx-auto flex w-full items-center justify-center"
+      >
+        <div
+          @click="setRightPanel(view)"
+          :class="
+            `flex w-full items-center justify-center py-2` +
+            (rightViewTag == view.name
+              ? ` bg-gray-400 text-[var(--color-background)] dark:bg-gray-200`
+              : '')
+          "
+        >
           <component :is="view.icon" />
         </div>
       </div>
@@ -183,8 +201,12 @@ onMounted(async () => {
 </template>
 
 <style>
-.cm-editor .cm-cursor { border-left-color: var(--color-text) }
-.cm-activeLine { background-color: transparent !important;}
+.cm-editor .cm-cursor {
+  border-left-color: var(--color-text);
+}
+.cm-activeLine {
+  background-color: transparent !important;
+}
 
 .cm-editor {
   max-height: 82lvh;

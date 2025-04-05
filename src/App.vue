@@ -4,9 +4,9 @@ import { RouterView } from 'vue-router'
 
 <template>
   <!-- Layout View -->
-  <div class="flex flex-col main h-screen">
-    <header class="flex flex-row sticky justify-between items-center py-2 px-2 shadow-sm border-b">
-      <div class=" font-mono text-lg font-bold">code.now</div>
+  <div class="main flex h-screen flex-col">
+    <header class="sticky flex flex-row items-center justify-between border-b px-2 py-2 shadow-sm">
+      <div class="font-mono text-lg font-bold">code.now</div>
       <!-- <div>
         <div>Share</div>
       </div> -->
@@ -15,10 +15,12 @@ import { RouterView } from 'vue-router'
     <main class="flex-1 overflow-auto">
       <RouterView />
     </main>
-    <footer class="flex flex-row justify-between py-3 px-2 bg-[var(--color-background)] w-full">
-      <div>
+    <footer
+      class="flex w-full flex-row justify-between border-t bg-[var(--color-background)] px-2 py-3"
+    >
+      <!-- <div>
         <button>Share <span class="font-mono font-bold">code.now</span></button>
-      </div>
+      </div> -->
     </footer>
   </div>
 </template>

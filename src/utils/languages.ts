@@ -1,11 +1,11 @@
-import { cpp } from '@codemirror/lang-cpp'
-import { python } from '@codemirror/lang-python'
-import { rust } from '@codemirror/lang-rust'
-import { go } from '@codemirror/lang-go'
+const { cpp } = await import('@codemirror/lang-cpp')
+const { python } = await import('@codemirror/lang-python')
+const { rust } = await import('@codemirror/lang-rust')
+const { go } = await import('@codemirror/lang-go')
 const { java } = await import('@codemirror/lang-java')
-const { c, csharp, dart, scala } = await import('@codemirror/legacy-modes/mode/clike')
+const { c, csharp, dart, scala, kotlin } = await import('@codemirror/legacy-modes/mode/clike')
 const { swift } = await import('@codemirror/legacy-modes/mode/swift')
-import { haskell } from '@codemirror/legacy-modes/mode/haskell'
+const { haskell } = await import('@codemirror/legacy-modes/mode/haskell')
 
 import { extname } from '@std/path'
 import { javascript } from '@codemirror/lang-javascript'
@@ -86,21 +86,28 @@ export const languages = [
     id: 'swift',
     icon: 'vscode-icons:file-type-swift',
     extensions: ['swift'],
-    stream: swift
+    stream: swift,
   },
   {
     name: 'Java',
     id: 'java',
     icon: 'devicon:java',
     extensions: ['java'],
-    support: java()
+    support: java(),
   },
   {
     name: 'Scala',
     id: 'scala',
     icon: 'devicon:scala',
     extensions: ['scala', 'sc'],
-    stream: scala
+    stream: scala,
+  },
+  {
+    name: 'Kotlin',
+    id: 'kotlin',
+    icon: 'devicon:kotlin',
+    extensions: ['kt'],
+    stream: kotlin
   }
 ]
 

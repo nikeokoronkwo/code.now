@@ -8,6 +8,7 @@ import { computed, onMounted, ref, useTemplateRef } from 'vue'
 import { detectLanguage } from '@/utils/languages'
 import { useRoute } from 'vue-router'
 import type { Gist } from '@/utils/gists'
+import UnsupportedOptionView from '@/components/UnsupportedOptionView.vue'
 
 const views = [
   {
@@ -22,6 +23,7 @@ const views = [
         ></path>
       </svg>
     ),
+    view: UnsupportedOptionView
   },
   {
     name: 'Comments',
@@ -33,22 +35,24 @@ const views = [
         ></path>
       </svg>
     ),
+    view: UnsupportedOptionView
   },
-  {
-    name: 'AI',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24">
-        <path
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M8 16v-6a2 2 0 1 1 4 0v6m-4-3h4m4-5v8"
-        ></path>
-      </svg>
-    ),
-  },
+  // {
+  //   name: 'AI',
+  //   icon: (
+  //     <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24">
+  //       <path
+  //         fill="none"
+  //         stroke="currentColor"
+  //         strokeLinecap="round"
+  //         strokeLinejoin="round"
+  //         strokeWidth={2}
+  //         d="M8 16v-6a2 2 0 1 1 4 0v6m-4-3h4m4-5v8"
+  //       ></path>
+  //     </svg>
+  //   ),
+  //   view: UnsupportedOptionView
+  // },
 ]
 
 const route = useRoute()
@@ -73,7 +77,14 @@ const language = computed(
 const rightViewTag = ref<string | null>(null)
 const rightView = ref(null)
 
-function setRightPanel(view) {}
+function setRightPanel(view) {
+  if (rightViewTag.value && rightViewTag.value === view.name) {
+    rightViewTag.value = null
+  } else {
+    rightViewTag.value = view.name
+    rightView.value = view.view
+  }
+}
 
 async function setLanguage() {
   if (!e) return
@@ -127,12 +138,14 @@ onMounted(async () => {
     state
   });
 })
+
+// ${rightViewTag ? 'max-w-[70%]' : `max-w-[94%]`}
 </script>
 
 <template>
-  <div class="editor-container flex flex-row p-1 py-2 w-full max-w-[100lvw] max-h-full">
+  <div class="editor-container flex flex-row px-1 w-full max-w-[100lvw] max-h-full h-full">
     <!-- Two Major Tabs -->
-    <div class="flex flex-col grow max-w-[94%]">
+    <div :class="`flex-1 flex flex-col grow w-0`">
       <!-- Main Code Editor Tab -->
       <div class="flex min-h-8 flex-row items-center justify-start gap-1 px-1">
         <!-- Icon -->
@@ -155,7 +168,10 @@ onMounted(async () => {
         ></div>
       </div>
     </div>
-    <div class="flex flex-col items-center justify-start gap-4 px-3 border-l dark:border-gray-100 w-full max-w-14">
+    <div v-show="rightViewTag" class="min-w-[25rem] px-3">
+      <component :is="rightView" />
+    </div>
+    <div class="flex flex-col items-center justify-start gap-4 px-3 py-2 border-l dark:border-gray-100 w-full max-w-14">
       <!-- Tab Items -->
       <div v-for="view in views" :key="view.name">
         <div @click="setRightPanel(view)">
@@ -167,6 +183,9 @@ onMounted(async () => {
 </template>
 
 <style>
+.cm-editor .cm-cursor { border-left-color: var(--color-text) }
+.cm-activeLine { background-color: transparent !important;}
+
 .cm-editor {
   max-height: 82lvh;
 }

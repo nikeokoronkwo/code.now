@@ -1,14 +1,15 @@
 <script setup lang="tsx">
 import { basicSetup, EditorView } from 'codemirror'
-import { EditorState, Compartment } from '@codemirror/state'
+import { EditorState, Compartment, Text } from '@codemirror/state'
 import { StreamLanguage } from '@codemirror/language'
 import { Icon } from '@iconify/vue'
 
-import { computed, onMounted, ref, useTemplateRef } from 'vue'
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { detectLanguage } from '@/utils/languages'
 import { useRoute } from 'vue-router'
 import type { Gist } from '@/utils/gists'
 import UnsupportedOptionView from '@/components/UnsupportedOptionView.vue'
+import usePersistentCode from '@/stores/usePersistentCode'
 
 const views = [
   {
@@ -77,6 +78,8 @@ const language = computed(
 const rightViewTag = ref<string | null>(null)
 const rightView = ref(null)
 
+const persistentCode = usePersistentCode()
+
 function setRightPanel(view) {
   if (rightViewTag.value && rightViewTag.value === view.name) {
     rightViewTag.value = null
@@ -107,6 +110,10 @@ async function setLanguage() {
   }
 }
 
+function handleChange(doc: Text) {
+  persistentCode.saveCode(doc.toString(), filename.value)
+}
+
 onMounted(async () => {
   let doc
 
@@ -119,6 +126,12 @@ onMounted(async () => {
       doc = file.content
       filename.value = file.filename
     }
+  } else {
+    const code = persistentCode.code.length === 0 ? persistentCode.getCode() : persistentCode.code;
+    if (code && code?.length !== 0) {
+      doc = persistentCode.code
+      filename.value = persistentCode.filename
+    }
   }
 
   const state = EditorState.create(
@@ -127,15 +140,20 @@ onMounted(async () => {
           doc,
           extensions: [
             basicSetup,
-            languageCompartment.of(
+            languageCompartment.of( filename.value.length === 0 ? [] :
               (detectLanguage(filename.value)?.stream
                 ? StreamLanguage.define(detectLanguage(filename.value)?.stream!)
                 : detectLanguage(filename.value)?.support)!,
             ),
+            EditorView.updateListener.of((update) => {
+              if (update.docChanged) handleChange(update.state.doc);
+            }),
           ],
         }
       : {
-          extensions: [basicSetup, languageCompartment.of([])],
+          extensions: [basicSetup, languageCompartment.of([]), EditorView.updateListener.of((update) => {
+              if (update.docChanged) handleChange(update.state.doc);
+            }),],
         },
   )
   e = new EditorView({
@@ -143,6 +161,8 @@ onMounted(async () => {
     state,
   })
 })
+
+watch((e as EditorView | null)?.state.doc.toString(), )
 
 // ${rightViewTag ? 'max-w-[70%]' : `max-w-[94%]`}
 </script>

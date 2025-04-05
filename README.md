@@ -1,45 +1,17 @@
-# code.now
+# `code.now`
+A powerful web code editor
 
-This template should help get you started developing with Vue 3 in Vite.
+## Features
+- Lightweight
+- Supports multiple languages: From C and C++ to Python and JavaScript, code.now supports syntax highlighting and autocomplete for a wide range of languages
+- Share code easily: With [Github Gists](), you can easily share code for people to see just with the github gist ID.
 
-## Recommended IDE Setup
+## Why another code editor?
+This code editor isn't designed to be a complete IDE for running projects on the web, but rather a lightweight and simple code editor that people can use to write and share code snippets online easily and free. 
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+> We do have some more features coming on to help with sharing code snippets and communicating between others
 
-## Type Support for `.vue` Imports in TS
+## Contributing
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-pnpm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-pnpm dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-pnpm build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-pnpm test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-pnpm lint
-```
+## Stack
+- Vue

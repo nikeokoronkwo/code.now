@@ -103,8 +103,10 @@ onMounted(async () => {
     const body = await (await fetch(`https://api.github.com/gists/${id}`)).json() as Gist
 
     /** @todo support multiple files */
-    if (!Object.entries(body.files)[0][1].truncated) {
-      doc = Object.entries(body.files)[0][1].content
+    let file = Object.entries(body.files)[0][1]
+    if (!file.truncated) {
+      doc = file.content
+      filename.value = file.filename
     }
   }
 
@@ -112,7 +114,7 @@ onMounted(async () => {
     doc,
     extensions: [
       basicSetup,
-      languageCompartment.of([]),
+      languageCompartment.of((detectLanguage(filename.value)?.stream ? StreamLanguage.define(detectLanguage(filename.value)?.stream!) : detectLanguage(filename.value)?.support)!),
     ]
   } : {
     extensions: [
@@ -128,9 +130,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-row p-1 py-2 h-full">
+  <div class="editor-container flex flex-row p-1 py-2 w-full max-w-[100lvw] max-h-full">
     <!-- Two Major Tabs -->
-    <div class="flex flex-1 w-full flex-col">
+    <div class="flex flex-col grow max-w-[94%]">
       <!-- Main Code Editor Tab -->
       <div class="flex min-h-8 flex-row items-center justify-start gap-1 px-1">
         <!-- Icon -->
@@ -148,13 +150,12 @@ onMounted(async () => {
           />
         </div>
       </div>
-      <div class="flex flex-row h-full">
+      <div class="editor w-full">
         <div ref="editor"
-        class="w-full"
         ></div>
       </div>
     </div>
-    <div class="flex flex-col items-center justify-start gap-4 px-3 border-l dark:border-gray-100">
+    <div class="flex flex-col items-center justify-start gap-4 px-3 border-l dark:border-gray-100 w-full max-w-14">
       <!-- Tab Items -->
       <div v-for="view in views" :key="view.name">
         <div @click="setRightPanel(view)">
@@ -166,6 +167,10 @@ onMounted(async () => {
 </template>
 
 <style>
+.cm-editor {
+  max-height: 82lvh;
+}
+
 @media (prefers-color-scheme: dark) {
   .cm-gutter {
     background-color: var(--color-background);

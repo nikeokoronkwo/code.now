@@ -19,7 +19,7 @@ const views = [
         <path
           fill="none"
           stroke="currentColor"
-          strokeWidth={1.5}
+          stroke-width={1.5}
           d="M20.409 9.353a2.998 2.998 0 0 1 0 5.294L7.597 21.614C5.534 22.737 3 21.277 3 18.968V5.033c0-2.31 2.534-3.769 4.597-2.648z"
         ></path>
       </svg>
@@ -30,10 +30,7 @@ const views = [
     name: 'Comments',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24">
-        <path
-          fill="currentColor"
-          d="M5 3h13a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-4.59l-3.7 3.71c-.18.18-.43.29-.71.29a1 1 0 0 1-1-1v-3H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3m13 1H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h4v4l4-4h5a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"
-        ></path>
+        <path fill="currentColor" d="M5 3h13a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-4.59l-3.7 3.71c-.18.18-.43.29-.71.29a1 1 0 0 1-1-1v-3H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3m13 1H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h4v4l4-4h5a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"></path>
       </svg>
     ),
     view: UnsupportedOptionView,
@@ -162,7 +159,7 @@ onMounted(async () => {
   })
 })
 
-watch((e as EditorView | null)?.state.doc.toString(), )
+// watch((e as EditorView | null)?.state.doc.toString(), )
 
 // ${rightViewTag ? 'max-w-[70%]' : `max-w-[94%]`}
 </script>

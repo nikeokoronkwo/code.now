@@ -6,11 +6,34 @@ const { java } = await import('@codemirror/lang-java')
 const { c, csharp, dart, scala, kotlin } = await import('@codemirror/legacy-modes/mode/clike')
 const { swift } = await import('@codemirror/legacy-modes/mode/swift')
 const { haskell } = await import('@codemirror/legacy-modes/mode/haskell')
+const { markdown, markdownLanguage } = await import('@codemirror/lang-markdown')
 
 import { extname } from '@std/path'
 import { javascript } from '@codemirror/lang-javascript'
+import type { LanguageSupport, StreamParser } from '@codemirror/language'
+import { defineAsyncComponent, type DefineComponent } from 'vue'
 
-export const languages = [
+interface BaseLang {
+  name: string;
+  id: string;
+  icon: string;
+  extensions: string[];
+  options?: {
+    name: string;
+    icon: string;
+    component: DefineComponent
+  }[]
+}
+
+type Lang = BaseLang & (
+{
+  stream: StreamParser
+} | {
+  support: LanguageSupport
+}
+);
+
+export const languages: Lang[] = [
   {
     name: 'C',
     id: 'c',
@@ -108,6 +131,18 @@ export const languages = [
     icon: 'devicon:kotlin',
     extensions: ['kt'],
     stream: kotlin
+  },
+  {
+    name: 'Markdown',
+    id: 'markdown',
+    icon: 'devicon:markdown',
+    extensions: ['md', 'markdown'],
+    support: markdown({ base: markdownLanguage }),
+    options: [{
+      name: 'Markdown Preview',
+      icon: "dashicons:text-page",
+      component: defineAsyncComponent(() => import('@/components/options/MarkdownPreview.vue'))
+    }]
   }
 ]
 

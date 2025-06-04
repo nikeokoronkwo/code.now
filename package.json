@@ -20,6 +20,7 @@
     "@codemirror/lang-go": "^6.0.1",
     "@codemirror/lang-java": "^6.0.1",
     "@codemirror/lang-javascript": "^6.2.3",
+    "@codemirror/lang-markdown": "^6.3.2",
     "@codemirror/lang-python": "^6.1.7",
     "@codemirror/lang-rust": "^6.0.1",
     "@codemirror/language": "^6.11.0",
@@ -29,6 +30,12 @@
     "@std/path": "npm:@jsr/std__path@^1.0.8",
     "codemirror": "^6.0.1",
     "pinia": "^3.0.1",
+    "rehype-sanitize": "^6.0.0",
+    "rehype-stringify": "^10.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "unified": "^11.0.5",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },
@@ -61,5 +68,6 @@
     "vite-plugin-vue-devtools": "^7.7.2",
     "vitest": "^3.1.1",
     "vue-tsc": "^2.2.8"
-  }
+  },
+  "packageManager": "pnpm@9.15.2+sha256.022309bb31359142b65bfa889e0406d2eebd5acfffca47e6944acf29d9d6a66b"
 }

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Icon } from '@iconify/vue';
 import { RouterView } from 'vue-router'
 </script>
 
@@ -18,9 +19,12 @@ import { RouterView } from 'vue-router'
     <footer
       class="flex w-full flex-row justify-between border-t bg-[var(--color-background)] px-2 py-3"
     >
-      <!-- <div>
-        <button>Share <span class="font-mono font-bold">code.now</span></button>
-      </div> -->
+      <small>Made with love by <a href="https://nikechukwu.deno.dev" class="hover:text-fuchsia-700" target="_blank">Nikechukwu Okoronkwo</a></small>
+      <div class="px-2">
+        <a href="https://github.com/nikeokoronkwo/code.now" target="_blank">
+          <Icon icon="mdi:github" class="scale-[2]" />
+        </a>
+      </div>
     </footer>
   </div>
 </template>

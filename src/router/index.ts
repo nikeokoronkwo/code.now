@@ -12,8 +12,8 @@ const router = createRouter({
     {
       path: '/__beta',
       name: 'beta',
-      component: () => import('../views/beta.vue')
-    }
+      component: () => import('../views/beta.vue'),
+    },
   ],
 })
 

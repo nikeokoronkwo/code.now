@@ -31,7 +31,10 @@ const views = [
     name: 'Comments',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24">
-        <path fill="currentColor" d="M5 3h13a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-4.59l-3.7 3.71c-.18.18-.43.29-.71.29a1 1 0 0 1-1-1v-3H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3m13 1H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h4v4l4-4h5a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"></path>
+        <path
+          fill="currentColor"
+          d="M5 3h13a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-4.59l-3.7 3.71c-.18.18-.43.29-.71.29a1 1 0 0 1-1-1v-3H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3m13 1H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h4v4l4-4h5a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"
+        ></path>
       </svg>
     ),
     view: UnsupportedOptionView,
@@ -125,10 +128,11 @@ onMounted(async () => {
       filename.value = file.filename
     }
   } else {
-    const codeFile = persistentCode.codeFiles.length === 0 ? persistentCode.getAllCodeFiles()?.[0] : undefined;
+    const codeFile =
+      persistentCode.codeFiles.length === 0 ? persistentCode.getAllCodeFiles()?.[0] : undefined
     if (codeFile && codeFile.code.length !== 0) {
       doc = codeFile.code
-      filename.value = codeFile.name;
+      filename.value = codeFile.name
     }
   }
 
@@ -138,20 +142,26 @@ onMounted(async () => {
           doc,
           extensions: [
             basicSetup,
-            languageCompartment.of( filename.value.length === 0 ? [] :
-              (detectLanguage(filename.value)?.stream
-                ? StreamLanguage.define(detectLanguage(filename.value)?.stream!)
-                : detectLanguage(filename.value)?.support)!,
+            languageCompartment.of(
+              filename.value.length === 0
+                ? []
+                : (detectLanguage(filename.value)?.stream
+                    ? StreamLanguage.define(detectLanguage(filename.value)?.stream!)
+                    : detectLanguage(filename.value)?.support)!,
             ),
             EditorView.updateListener.of((update) => {
-              if (update.docChanged) handleChange(update.state.doc);
+              if (update.docChanged) handleChange(update.state.doc)
             }),
           ],
         }
       : {
-          extensions: [basicSetup, languageCompartment.of([]), EditorView.updateListener.of((update) => {
-              if (update.docChanged) handleChange(update.state.doc);
-            }),],
+          extensions: [
+            basicSetup,
+            languageCompartment.of([]),
+            EditorView.updateListener.of((update) => {
+              if (update.docChanged) handleChange(update.state.doc)
+            }),
+          ],
         },
   )
   e = new EditorView({

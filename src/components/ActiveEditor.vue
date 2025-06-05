@@ -1,21 +1,20 @@
 <script setup lang="tsx">
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
-import { basicSetup, EditorView } from 'codemirror';
-import { Compartment, EditorState, Text } from '@codemirror/state';
+import { basicSetup, EditorView } from 'codemirror'
+import { Compartment, EditorState, Text } from '@codemirror/state'
 
 import { detectLanguage } from '@/utils/languages'
 import type { Gist } from '@/utils/gists'
-import UnsupportedOptionView from './toolbar/UnsupportedOptionView.vue';
-import usePersistentCode from '@/stores/usePersistentCode';
-import { StreamLanguage } from '@codemirror/language';
-
+import UnsupportedOptionView from './toolbar/UnsupportedOptionView.vue'
+import usePersistentCode from '@/stores/usePersistentCode'
+import { StreamLanguage } from '@codemirror/language'
 
 const model = defineModel('filename', {
-  type: String
+  type: String,
 })
 const codeModel = defineModel('code', {
   type: String,
-  required: false
+  required: false,
 })
 
 const views = [
@@ -37,7 +36,10 @@ const views = [
     name: 'Comments',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24">
-        <path fill="currentColor" d="M5 3h13a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-4.59l-3.7 3.71c-.18.18-.43.29-.71.29a1 1 0 0 1-1-1v-3H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3m13 1H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h4v4l4-4h5a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"></path>
+        <path
+          fill="currentColor"
+          d="M5 3h13a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-4.59l-3.7 3.71c-.18.18-.43.29-.71.29a1 1 0 0 1-1-1v-3H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3m13 1H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h4v4l4-4h5a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"
+        ></path>
       </svg>
     ),
     view: UnsupportedOptionView,
@@ -58,39 +60,44 @@ const views = [
   //   ),
   //   view: UnsupportedOptionView
   // },
-];
+]
 
 const languageCompartment = new Compartment()
 
-const filename = computed(() => model.value ?? '');
-const code = ref(codeModel.value ?? '');
+const filename = computed(() => model.value ?? '')
+const code = ref(codeModel.value ?? '')
 
 const editorRef = useTemplateRef('editor')
 // the editor itself
 const editorState = EditorState.create(
-    code?.value
-      ? {
-          doc: code.value,
-          extensions: [
-            basicSetup,
-            languageCompartment.of( filename.value.length === 0 ? [] :
-              (detectLanguage(filename.value)?.stream
-                ? StreamLanguage.define(detectLanguage(filename.value)?.stream!)
-                : detectLanguage(filename.value)?.support)!,
-            ),
-            EditorView.updateListener.of((update) => {
-              if (update.docChanged) handleChange(update.state.doc);
-            }),
-          ],
-        }
-      : {
-          extensions: [basicSetup, languageCompartment.of([]), EditorView.updateListener.of((update) => {
-              if (update.docChanged) handleChange(update.state.doc);
-            }),],
-        },
-  )
+  code?.value
+    ? {
+        doc: code.value,
+        extensions: [
+          basicSetup,
+          languageCompartment.of(
+            filename.value.length === 0
+              ? []
+              : (detectLanguage(filename.value)?.stream
+                  ? StreamLanguage.define(detectLanguage(filename.value)?.stream!)
+                  : detectLanguage(filename.value)?.support)!,
+          ),
+          EditorView.updateListener.of((update) => {
+            if (update.docChanged) handleChange(update.state.doc)
+          }),
+        ],
+      }
+    : {
+        extensions: [
+          basicSetup,
+          languageCompartment.of([]),
+          EditorView.updateListener.of((update) => {
+            if (update.docChanged) handleChange(update.state.doc)
+          }),
+        ],
+      },
+)
 let e: EditorView | null = null
-
 
 const language = computed(
   () =>
@@ -104,7 +111,7 @@ const language = computed(
 const rightViewTag = ref<string | null>(null)
 const rightView = ref(null)
 
-function setRightPanel(view: typeof views[number]) {
+function setRightPanel(view: (typeof views)[number]) {
   if (rightViewTag.value && rightViewTag.value === view.name) {
     rightViewTag.value = null
   } else {
@@ -141,7 +148,7 @@ function handleChange(doc: Text) {
 onMounted(async () => {
   e = new EditorView({
     parent: editorRef.value!,
-    state: editorState
+    state: editorState,
   })
 })
 
@@ -156,20 +163,20 @@ watch(codeModel, async (newValue, oldValue) => {
       changes: {
         from: 0,
         to: e.state.doc.length,
-        insert: newValue
-      }
-    });
+        insert: newValue,
+      },
+    })
     if (newValue) code.value = newValue
   }
 })
 </script>
 
 <template>
-  <div class="flex flex-row justify-between w-screen h-full">
-    <div class="editor h-full overflow-auto w-full">
+  <div class="flex h-full w-screen flex-row justify-between">
+    <div class="editor h-full w-full overflow-auto">
       <div ref="editor"></div>
     </div>
-    <div v-show="rightViewTag" class="min-w-[20rem] border-l px-3 shadow flex">
+    <div v-show="rightViewTag" class="flex min-w-[20rem] border-l px-3 shadow">
       <component :is="rightView" />
     </div>
     <div

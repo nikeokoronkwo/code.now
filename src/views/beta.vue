@@ -1,67 +1,66 @@
 <script setup lang="ts">
-import ActiveEditor from '@/components/ActiveEditor.vue';
-import usePersistentCode from '@/stores/usePersistentCode';
-import type { Gist } from '@/utils/gists';
-import { detectLanguage } from '@/utils/languages';
-import { computed, onMounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { Icon } from "@iconify/vue"
+import ActiveEditor from '@/components/ActiveEditor.vue'
+import usePersistentCode from '@/stores/usePersistentCode'
+import type { Gist } from '@/utils/gists'
+import { detectLanguage } from '@/utils/languages'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { Icon } from '@iconify/vue'
 
 const route = useRoute()
 const id = route.query.id as string | undefined
 
-const currentIndex = ref(0);
+const currentIndex = ref(0)
 
-const codeFiles = ref<{
-  name: string;
-  code: string;
-}[]>([])
+const codeFiles = ref<
+  {
+    name: string
+    code: string
+  }[]
+>([])
 
 const currentFilename = computed({
-  get: () => codeFiles.value.length === 0 ? '' : codeFiles.value[currentIndex.value].name,
+  get: () => (codeFiles.value.length === 0 ? '' : codeFiles.value[currentIndex.value].name),
   set(newValue) {
-    if (codeFiles.value.length === 0) return;
+    if (codeFiles.value.length === 0) return
     codeFiles.value[currentIndex.value].name = newValue
-  }
+  },
 })
-const currentCode = ref(codeFiles.value.length === 0 ? '' : codeFiles.value[currentIndex.value].code)
+const currentCode = ref(
+  codeFiles.value.length === 0 ? '' : codeFiles.value[currentIndex.value].code,
+)
 
 watch(currentIndex, (newValue) => {
   currentCode.value = codeFiles.value[newValue].code
 })
 
-
-const currentLanguage = computed(
-  () =>
-    getLanguage(currentFilename.value),
-)
+const currentLanguage = computed(() => getLanguage(currentFilename.value))
 
 function getLanguage(filename: string) {
-  return detectLanguage(filename) ?? {
+  return (
+    detectLanguage(filename) ?? {
       name: 'unknown',
       id: undefined,
       icon: 'vscode-icons:default-file',
-    };
+    }
+  )
 }
 
 function addNewFile() {
   codeFiles.value.push({
     name: '',
-    code: ''
-  });
+    code: '',
+  })
   currentIndex.value = codeFiles.value.length - 1
 }
 
-function removeCodeFile(codefile: {
-  name: string;
-  code: string;
-}) {
+function removeCodeFile(codefile: { name: string; code: string }) {
   const index = codeFiles.value.indexOf(codefile)
-  if (index === -1) return;
+  if (index === -1) return
 
-  codeFiles.value.splice(index, 1);
+  codeFiles.value.splice(index, 1)
 
-  if (index === currentIndex.value) currentIndex.value = index - 1;
+  if (index === currentIndex.value) currentIndex.value = index - 1
 }
 
 const persistentCode = usePersistentCode()
@@ -76,34 +75,39 @@ onMounted(async () => {
     codeFiles.value = files.map(([_str, fileInfo]) => {
       return {
         name: fileInfo.filename,
-        code: fileInfo.content
+        code: fileInfo.content,
       }
     })
-
   } else {
-    const storedCodeFiles = persistentCode.getAllCodeFiles();
+    const storedCodeFiles = persistentCode.getAllCodeFiles()
 
-    codeFiles.value = storedCodeFiles ?? [];
+    codeFiles.value = storedCodeFiles ?? []
   }
 
   currentCode.value = codeFiles.value[0].code
   currentFilename.value = codeFiles.value[0].name
 })
 
-watch(codeFiles, (newValue) => {
-  persistentCode.saveAllCodeFiles(newValue)
-}, { deep: true })
-
+watch(
+  codeFiles,
+  (newValue) => {
+    persistentCode.saveAllCodeFiles(newValue)
+  },
+  { deep: true },
+)
 </script>
 
 <template>
-  <div class="flex flex-1 grow flex-col w-full max-w-[100lvw] h-full">
-    <div class="flex flex-row justify-between min-h-8 border-b-[1px]">
+  <div class="flex h-full w-full max-w-[100lvw] flex-1 grow flex-col">
+    <div class="flex min-h-8 flex-row justify-between border-b-[1px]">
       <div class="flex flex-row">
         <div
           v-for="codeFile in codeFiles"
           :key="codeFiles.indexOf(codeFile)"
-          :class="`flex flex-row items-center justify-evenly border-l border-r space-x-3 px-3 ` + (codeFile.name !== currentFilename ? 'bg-gray-300' : '')"
+          :class="
+            `flex flex-row items-center justify-evenly space-x-3 border-l border-r px-3 ` +
+            (codeFile.name !== currentFilename ? 'bg-gray-300' : '')
+          "
           @click="currentIndex = codeFiles.indexOf(codeFile)"
         >
           <div :key="getLanguage(codeFile.name).name">
@@ -111,7 +115,10 @@ watch(codeFiles, (newValue) => {
           </div>
 
           <Transition name="slide">
-            <div v-if="codeFile.name !== currentFilename" class="flex flex-col items-center justify-center">
+            <div
+              v-if="codeFile.name !== currentFilename"
+              class="flex flex-col items-center justify-center"
+            >
               <span class="text-sm">{{ codeFile.name }}</span>
             </div>
             <div v-else class="flex flex-col items-center justify-center">
@@ -127,10 +134,9 @@ watch(codeFiles, (newValue) => {
             <Icon icon="oui:cross" />
           </button>
         </div>
-
       </div>
       <button
-        class="min-w-2 border-l-2 flex flex-col items-center justify-center"
+        class="flex min-w-2 flex-col items-center justify-center border-l-2"
         @click="addNewFile()"
       >
         <Icon icon="ic:round-plus" class="aspect-square w-8 scale-150" />

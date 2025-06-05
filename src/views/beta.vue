@@ -53,6 +53,18 @@ function addNewFile() {
   currentIndex.value = codeFiles.value.length - 1
 }
 
+function removeCodeFile(codefile: {
+  name: string;
+  code: string;
+}) {
+  const index = codeFiles.value.indexOf(codefile)
+  if (index === -1) return;
+
+  codeFiles.value.splice(index, 1);
+
+  if (index === currentIndex.value) currentIndex.value = index - 1;
+}
+
 const persistentCode = usePersistentCode()
 
 onMounted(async () => {
@@ -111,6 +123,10 @@ watch(codeFiles, (newValue) => {
               />
             </div>
           </Transition>
+
+          <button v-if="codeFiles.length !== 1" @click="removeCodeFile(codeFile)">
+            <Icon icon="oui:cross" />
+          </button>
         </div>
 
       </div>

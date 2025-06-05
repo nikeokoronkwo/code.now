@@ -13,7 +13,7 @@ import { RouterView } from 'vue-router'
       </div> -->
     </header>
     <!-- Main View -->
-    <main class="flex-1 overflow-auto">
+    <main class="flex-1">
       <RouterView />
     </main>
     <footer

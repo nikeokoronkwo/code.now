@@ -8,13 +8,14 @@ import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { detectLanguage } from '@/utils/languages'
 import { useRoute } from 'vue-router'
 import type { Gist } from '@/utils/gists'
-import UnsupportedOptionView from '@/components/UnsupportedOptionView.vue'
+import UnsupportedOptionView from '@/components/toolbar/UnsupportedOptionView.vue'
 import usePersistentCode from '@/stores/usePersistentCode'
 
 const views = [
   {
     name: 'Run',
     icon: (
+      // eslint-disable-line
       <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24">
         <path
           fill="none"
@@ -124,10 +125,10 @@ onMounted(async () => {
       filename.value = file.filename
     }
   } else {
-    const code = persistentCode.code.length === 0 ? persistentCode.getCode() : persistentCode.code;
-    if (code && code?.length !== 0) {
-      doc = persistentCode.code
-      filename.value = persistentCode.filename
+    const codeFile = persistentCode.codeFiles.length === 0 ? persistentCode.getAllCodeFiles()?.[0] : undefined;
+    if (codeFile && codeFile.code.length !== 0) {
+      doc = codeFile.code
+      filename.value = codeFile.name;
     }
   }
 

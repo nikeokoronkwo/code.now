@@ -21,7 +21,7 @@ interface BaseLang {
   options?: {
     name: string;
     icon: string;
-    component: DefineComponent
+    component: ReturnType<typeof defineAsyncComponent>
   }[]
 }
 

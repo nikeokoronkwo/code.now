@@ -3,41 +3,72 @@ import { defineStore } from 'pinia'
 
 /** @todo change to useCode to store code persistently for some time */
 export default defineStore('code', () => {
-  const code = ref('');
-  const filename = ref('');
+  const codeFiles = ref<{
+      name: string;
+      code: string;
+  }[]>([])
   const expiration = (3*24*60*60)
 
-  function saveCode(c?: string, f?: string) {
+  function saveCode(code: string, file: string) {
     const now = Date.now()
-    localStorage.setItem('code', c ?? code.value);
-    localStorage.setItem('code_filename', f ?? filename.value);
-    localStorage.setItem('code_expires_in', now + expiration*1000);
+    const index = codeFiles.value.findIndex(f => f.name === file);
+    if (index !== -1) {
+      codeFiles.value[index] = {
+        name: file,
+        code
+      };
+    } else {
+      codeFiles.value.push({
+        name: file,
+        code
+      })
+    }
+    cacheCode();
   }
 
-  function getCode(): string | null {
+  function cacheCode() {
+    localStorage.setItem('files', JSON.stringify(codeFiles.value));
+    localStorage.setItem('files_expire_in', (Date.now() + expiration*1000).toString() )
+  }
+
+  function getCode(file: string): string | null {
     const now = Date.now()
 
-    const expires = localStorage.getItem('code_expires_in')
+    const codeFile = codeFiles.value.find(f => f.name === file);
+    if (!codeFile) return null;
+
+
+        return codeFile.code;
+  }
+
+  function getAllCodeFiles() {
+    const now = Date.now()
+
+    const files = localStorage.getItem('files')
+
+    const expires = localStorage.getItem('files_expire_in');
     if (expires===undefined || expires===null) {
       return null;
     }
 
     if (parseInt(expires) < now) {// Expired
-        localStorage.removeItem('code');
-        return null;
+        localStorage.removeItem('files');
     } else {
-        try {
-            code.value = localStorage.getItem('code') ?? '';
-            filename.value = localStorage.getItem('code_filename') ?? '';
-            return code.value;
-        } catch(e) {
-            console.log('getStorage: Error reading key ["code"] from localStorage: ' + JSON.stringify(e) );
-            return null;
-        }
+        codeFiles.value = JSON.parse(files ?? '{}');
     }
+
+    return codeFiles.value;
+  }
+
+  function saveAllCodeFiles(files: {
+      name: string;
+      code: string;
+  }[]) {
+    codeFiles.value = files;
+    cacheCode()
   }
 
   onMounted(getCode)
 
-  return { code, filename, getCode, saveCode }
+  return { codeFiles, getCode, saveCode, getAllCodeFiles, saveAllCodeFiles }
 })

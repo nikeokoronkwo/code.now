@@ -27,7 +27,6 @@ const currentFilename = computed({
 const currentCode = ref(codeFiles.value.length === 0 ? '' : codeFiles.value[currentIndex.value].code)
 
 watch(currentIndex, (newValue) => {
-  console.log(currentIndex.value, newValue, codeFiles.value[newValue].code)
   currentCode.value = codeFiles.value[newValue].code
 })
 

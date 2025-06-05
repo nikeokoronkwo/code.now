@@ -62,12 +62,15 @@ const views = [
 
 const languageCompartment = new Compartment()
 
+const filename = computed(() => model.value ?? '');
+const code = ref(codeModel.value ?? '');
+
 const editorRef = useTemplateRef('editor')
 // the editor itself
 const editorState = EditorState.create(
-    codeModel?.value
+    code?.value
       ? {
-          doc: codeModel.value,
+          doc: code.value,
           extensions: [
             basicSetup,
             languageCompartment.of( filename.value.length === 0 ? [] :
@@ -88,7 +91,7 @@ const editorState = EditorState.create(
   )
 let e: EditorView | null = null
 
-const filename = computed(() => model.value ?? '');
+
 const language = computed(
   () =>
     detectLanguage(filename.value) ?? {
@@ -121,7 +124,6 @@ async function setLanguage() {
       e.dispatch({
         effects: languageCompartment.reconfigure(language.value.support),
       })
-      console.log('dispatch', e)
     } else {
       // has stream, use legacy
       e?.dispatch({
@@ -132,7 +134,8 @@ async function setLanguage() {
 }
 
 function handleChange(doc: Text) {
-  codeModel.value = doc.toString()
+  code.value = doc.toString()
+  codeModel.value = code.value
 }
 
 onMounted(async () => {
@@ -148,13 +151,16 @@ watch(filename, async (newValue, oldValue) => {
 })
 
 watch(codeModel, async (newValue, oldValue) => {
-  e?.dispatch({
-    changes: {
-      from: 0,
-      to: e.state.doc.length,
-      insert: newValue
-    }
-});
+  if (code.value != newValue) {
+    e?.dispatch({
+      changes: {
+        from: 0,
+        to: e.state.doc.length,
+        insert: newValue
+      }
+    });
+    if (newValue) code.value = newValue
+  }
 })
 </script>
 

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import markdownRender from '@/utils/markdownRender';
-import { ref, watch } from 'vue';
+import markdownRender from '@/utils/markdownRender'
+import { ref, watch } from 'vue'
 
 const model = defineModel({
-  type: String
+  type: String,
 })
 
-const html = ref<string>('');
+const html = ref<string>('')
 
 watch(model, async (value, oldValue) => {
   html.value = value ? await markdownRender(value) : ''

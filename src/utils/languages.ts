@@ -14,24 +14,26 @@ import type { LanguageSupport, StreamParser } from '@codemirror/language'
 import { defineAsyncComponent, type DefineComponent } from 'vue'
 
 interface BaseLang {
-  name: string;
-  id: string;
-  icon: string;
-  extensions: string[];
+  name: string
+  id: string
+  icon: string
+  extensions: string[]
   options?: {
-    name: string;
-    icon: string;
-    component: DefineComponent
+    name: string
+    icon: string
+    component: ReturnType<typeof defineAsyncComponent>
   }[]
 }
 
-type Lang = BaseLang & (
-{
-  stream: StreamParser
-} | {
-  support: LanguageSupport
-}
-);
+type Lang = BaseLang &
+  (
+    | {
+        stream: StreamParser
+      }
+    | {
+        support: LanguageSupport
+      }
+  )
 
 export const languages: Lang[] = [
   {
@@ -130,7 +132,7 @@ export const languages: Lang[] = [
     id: 'kotlin',
     icon: 'devicon:kotlin',
     extensions: ['kt'],
-    stream: kotlin
+    stream: kotlin,
   },
   {
     name: 'Markdown',
@@ -138,12 +140,14 @@ export const languages: Lang[] = [
     icon: 'devicon:markdown',
     extensions: ['md', 'markdown'],
     support: markdown({ base: markdownLanguage }),
-    options: [{
-      name: 'Markdown Preview',
-      icon: "dashicons:text-page",
-      component: defineAsyncComponent(() => import('@/components/options/MarkdownPreview.vue'))
-    }]
-  }
+    options: [
+      {
+        name: 'Markdown Preview',
+        icon: 'dashicons:text-page',
+        component: defineAsyncComponent(() => import('@/components/options/MarkdownPreview.vue')),
+      },
+    ],
+  },
 ]
 
 export function detectLanguage(filename: string) {
